@@ -1,0 +1,29 @@
+# Contributor: Daniel Speichert <daniel@speichert.pl>
+pkgname=dropbox-uploader
+pkgver=0.16.r10.g871ad08
+pkgrel=1
+pkgdesc="Dropbox Uploader is a BASH script which can be used to upload, download, list or delete files from Dropbox, an online file sharing, synchronization and backup service"
+arch=('any')
+url="https://github.com/andreafabrizi/Dropbox-Uploader"
+license=('GPL3')
+depends=('curl')
+makedepends=('git')
+provides=("${pkgname}")
+conflicts=("${pkgname}")
+source=("${pkgname}::git+https://github.com/andreafabrizi/Dropbox-Uploader.git")
+md5sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+package() {
+  install -d ${pkgdir}/usr/bin
+  install ${srcdir}/${pkgname}/dropbox_uploader.sh ${pkgdir}/usr/bin/${pkgname}
+  # dropShell.sh requires dropbox_uploader.sh in $PATH
+  #install ${srcdir}${pkgname}/dropShell.sh ${pkgdir}/usr/bin/${pkgname}-shell
+}

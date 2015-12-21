@@ -1,0 +1,28 @@
+# Contributor: Daniel Speichert <daniel@speichert.pl>
+pkgname=php7-imagick
+pkgver=3.4.0RC3
+pkgrel=1
+pkgdesc="Provides a wrapper to the ImageMagick library"
+arch=('i686' 'x86_64')
+url="https://pecl.php.net/package/imagick"
+license=('PHP')
+depends=('php7' 'imagemagick')
+makedepends=()
+source=(https://pecl.php.net/get/imagick-${pkgver}.tgz)
+md5sums=('0450a8455a7aef602e052881075cbf3f')
+
+php_prefix=opt/php7
+
+build() {
+  cd ${srcdir}/imagick-${pkgver}
+  /${php_prefix}/usr/bin/phpize
+  ./configure --prefix /${php_prefix}/usr --with-php-config=/${php_prefix}/usr/bin/php-config
+  make
+}
+
+package() {
+  cd ${srcdir}/imagick-${pkgver}
+  make INSTALL_ROOT=${pkgdir} install
+  install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+  echo "extension=imagick.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/imagick.ini
+}

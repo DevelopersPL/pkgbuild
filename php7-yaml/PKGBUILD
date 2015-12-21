@@ -1,0 +1,32 @@
+# Contributor: Daniel Speichert <daniel@speichert.pl>
+pkgname=php7-yaml
+pkgver=2.0.0RC6
+pkgrel=1
+pkgdesc="YAML-1.1 parser and emitter"
+arch=('i686' 'x86_64')
+url="https://pecl.php.net/package/yaml"
+license=('MIT')
+depends=('php7' 'libyaml')
+makedepends=()
+provides=("${pkgname}")
+conflicts=("${pkgname}")
+source=(https://pecl.php.net/get/yaml-${pkgver}.tgz)
+md5sums=('c4a88a4fee4427c4fd8719e677d3bf51')
+
+php_prefix=opt/php7
+
+build() {
+  cd ${srcdir}/yaml-${pkgver}
+  /${php_prefix}/usr/bin/phpize
+  ./configure --prefix /${php_prefix}/usr --with-php-config=/${php_prefix}/usr/bin/php-config
+  make
+}
+
+package() {
+  cd ${srcdir}/yaml-${pkgver}
+  make INSTALL_ROOT=${pkgdir} install
+  install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+  echo "extension=yaml.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/yaml.ini
+  install -d ${pkgdir}/usr/share/licenses/${pkgname}
+  install ${srcdir}/yaml-${pkgver}/LICENSE ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
+}

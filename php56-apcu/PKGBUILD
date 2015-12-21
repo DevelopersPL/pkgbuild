@@ -1,0 +1,28 @@
+# Contributor: Daniel Speichert <daniel@speichert.pl>
+pkgname=php56-apcu
+pkgver=4.0.10
+pkgrel=1
+pkgdesc="APCu - APC User Cache"
+arch=('i686' 'x86_64')
+url="https://pecl.php.net/package/apcu"
+license=('PHP')
+depends=('php56')
+makedepends=()
+source=(https://pecl.php.net/get/apcu-${pkgver}.tgz)
+md5sums=('e52d930a050066025095e2a448fd3cab')
+
+php_prefix=opt/php56
+
+build() {
+  cd ${srcdir}/apcu-${pkgver}
+  /${php_prefix}/usr/bin/phpize
+  ./configure --prefix /${php_prefix}/usr --with-php-config=/${php_prefix}/usr/bin/php-config
+  make
+}
+
+package() {
+  cd ${srcdir}/apcu-${pkgver}
+  make INSTALL_ROOT=${pkgdir} install
+  install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+  echo "extension=apcu.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/apcu.ini
+}

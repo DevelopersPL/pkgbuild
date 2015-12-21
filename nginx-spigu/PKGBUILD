@@ -1,0 +1,146 @@
+# Maintainer: Daniel Speichert <daniel@speichert.pl>
+pkgname=nginx-spigu
+provides=('nginx')
+conflicts=('nginx')
+pkgver=1.9.9
+pkgrel=1
+pkgdesc='Lightweight HTTP server and IMAP/POP3 proxy server, spigu release'
+arch=('i686' 'x86_64')
+url='http://nginx.org'
+license=('custom')
+depends=('pcre' 'zlib' 'openssl' 'geoip')
+backup=('etc/nginx/fastcgi.conf'
+        'etc/nginx/fastcgi_params'
+        'etc/nginx/koi-win'
+        'etc/nginx/koi-utf'
+        'etc/nginx/mime.types'
+        'etc/nginx/nginx.conf'
+        'etc/nginx/scgi_params'
+        'etc/nginx/uwsgi_params'
+        'etc/nginx/win-utf'
+        'etc/logrotate.d/nginx'
+        'usr/share/nginx/html/crossdomain.xml')
+_psver=1.10.33.1
+source=($url/download/nginx-$pkgver.tar.gz
+        nginx.service
+        logrotate
+        crossdomain.xml
+        git+https://github.com/arut/nginx-rtmp-module.git
+        https://github.com/pagespeed/ngx_pagespeed/archive/release-${_psver}-beta.tar.gz
+        https://dl.google.com/dl/page-speed/psol/${_psver}.tar.gz
+        git+https://github.com/aperezdc/ngx-fancyindex.git
+        git+https://github.com/openresty/headers-more-nginx-module.git
+        git+https://github.com/masterzen/nginx-upload-progress-module.git
+        git+https://github.com/evanmiller/mod_zip.git
+        git+https://github.com/youzee/nginx-unzip-module.git
+        git+https://github.com/stogh/ngx_http_auth_pam_module.git
+        git+https://github.com/slact/nchan.git
+        git+https://github.com/vozlt/nginx-module-vts.git
+        )
+md5sums=('50fdfa08e93ead7a111cba5a5f5735af'
+         'ce9a06bcaf66ec4a3c4eb59b636e0dfd'
+         '3441ce77cdd1aab6f0ab7e212698a8a7'
+         '4d2e9c834fa2e60cd8b23185b93d2e2e'
+         'SKIP'
+         '809ca42d034b43a428e03794f7a6ce33'
+         'd7463449b6e1aea835a81c09fc67d521'
+         'SKIP'
+         'SKIP'
+         'SKIP'
+         'SKIP'
+         'SKIP'
+         'SKIP'
+         'SKIP'
+         'SKIP')
+
+build() {
+  # https://www.nginx.com/resources/wiki/modules/
+  ln -sf "${srcdir}/psol" "${srcdir}/ngx_pagespeed-release-${_psver}-beta/psol"
+  cd $provides-$pkgver
+  ./configure \
+    --prefix=/etc/nginx \
+    --conf-path=/etc/nginx/nginx.conf \
+    --sbin-path=/usr/bin/nginx \
+    --pid-path=/run/nginx.pid \
+    --lock-path=/run/lock/nginx.lock \
+    --user=http \
+    --group=http \
+    --http-log-path=/var/log/nginx/access.log \
+    --error-log-path=stderr \
+    --http-client-body-temp-path=/var/lib/nginx/client-body \
+    --http-proxy-temp-path=/var/lib/nginx/proxy \
+    --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
+    --http-scgi-temp-path=/var/lib/nginx/scgi \
+    --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
+    --with-mail \
+    --with-mail_ssl_module \
+    --with-ipv6 \
+    --with-pcre-jit \
+    --with-file-aio \
+    --with-http_auth_request_module \
+    --with-http_dav_module \
+    --with-http_gunzip_module \
+    --with-http_gzip_static_module \
+    --with-http_realip_module \
+    --with-http_v2_module \
+    --with-http_ssl_module \
+    --with-http_stub_status_module \
+    --with-http_addition_module \
+    --with-http_degradation_module \
+    --with-http_flv_module \
+    --with-http_mp4_module \
+    --with-http_secure_link_module \
+    --with-http_sub_module \
+    --with-threads \
+    --with-stream \
+    --with-stream_ssl_module \
+    --with-http_geoip_module \
+    --with-http_gunzip_module \
+    --with-http_gzip_static_module \
+    --with-http_image_filter_module \
+    --add-module=../nginx-rtmp-module \
+    --add-module=../ngx_pagespeed-release-${_psver}-beta \
+    --add-module=../ngx-fancyindex \
+    --add-module=../headers-more-nginx-module \
+    --add-module=../nginx-upload-progress-module \
+    --add-module=../mod_zip \
+    --add-module=../nginx-unzip-module \
+    --add-module=../ngx_http_auth_pam_module \
+    --add-module=../nchan \
+    --add-module=../nginx-module-vts
+  make
+}
+
+package() {
+  cd $provides-$pkgver
+  make DESTDIR="$pkgdir" install
+
+  sed -e 's|\<user\s\+\w\+;|user html;|g' \
+      -e '44s|html|/usr/share/nginx/html|' \
+      -e '54s|html|/usr/share/nginx/html|' \
+      -i "$pkgdir"/etc/nginx/nginx.conf
+
+  rm "$pkgdir"/etc/nginx/*.default
+
+  install -d "$pkgdir"/var/lib/nginx
+  install -dm700 "$pkgdir"/var/lib/nginx/proxy
+
+  chmod 750 "$pkgdir"/var/log/nginx
+  chown http:log "$pkgdir"/var/log/nginx
+
+  install -d "$pkgdir"/usr/share/nginx
+  mv "$pkgdir"/etc/nginx/html/ "$pkgdir"/usr/share/nginx
+  install -Dm644 ../crossdomain.xml "$pkgdir"/usr/share/nginx/html/crossdomain.xml
+
+  install -Dm644 ../logrotate "$pkgdir"/etc/logrotate.d/nginx
+  install -Dm644 ../nginx.service "$pkgdir"/usr/lib/systemd/system/nginx.service
+  install -Dm644 LICENSE "$pkgdir"/usr/share/licenses/$provides/LICENSE
+
+  for i in ftdetect indent syntax; do
+  install -Dm644 contrib/vim/${i}/nginx.vim "${pkgdir}/usr/share/vim/vimfiles/${i}/nginx.vim"
+  done
+
+  rmdir "$pkgdir"/run
+}
+
+# vim:set ts=2 sw=2 et:
