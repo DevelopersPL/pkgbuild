@@ -1,0 +1,25 @@
+# Contributor: Daniel Speichert <daniel@speichert.pl>
+pkgname=php56-iconube
+pkgver=2015.10.19
+pkgrel=1
+pkgdesc="APCu - APC User Cache"
+arch=('x86_64')
+url="https://pecl.php.net/package/apcu"
+license=('custom')
+depends=('php56')
+makedepends=()
+source=(http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz)
+md5sums=('a5115a5f24f2e9c4d793c5feb78261f2')
+
+php_prefix=opt/php56
+
+pkgver() {
+  date -d "$(curl -s -I http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz | grep Last-Modified | awk -F ':' '{print $2}')" '+%Y.%m.%d'
+}
+
+package() {
+  install -D ${srcdir}/ioncube/ioncube_loader_lin_5.6.so ${pkgdir}/${php_prefix}/usr/lib/php/ioncube_loader_lin_5.6.so
+  install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+  echo "extension=ioncube_loader_lin_5.6.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/ioncube.ini
+  install -D -m644 ${srcdir}/ioncube/LICENSE.txt ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt
+}

@@ -4,9 +4,9 @@ After=syslog.target network.target
 
 [Service]
 Type=notify
-PIDFile=/run/php7-fpm/php-fpm.pid
+PIDFile=/run/php70-fpm/php-fpm.pid
 PrivateTmp=true
-ExecStart=/opt/php7/usr/bin/php-fpm --nodaemonize --pid /run/php7-fpm/php-fpm.pid
+ExecStart=/opt/php70/usr/bin/php-fpm --nodaemonize --pid /run/php70-fpm/php-fpm.pid
 ExecReload=/bin/kill -USR2 $MAINPID
 
 [Install]

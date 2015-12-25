@@ -1,23 +1,23 @@
-pkgbase=php7
+pkgbase=php70
 _pkgbase=php
-pkgname=('php7'
-                 'php7-apache'
-                 'php7-cgi'
-                 'php7-fpm'
-                 'php7-embed'
-                 'php7-enchant'
-                 'php7-gd'
-                 'php7-intl'
-                 'php7-ldap'
-                 'php7-mcrypt'
-                 'php7-odbc'
-                 'php7-pear'
-                 'php7-pgsql'
-                 'php7-pspell'
-                 'php7-snmp'
-                 'php7-sqlite'
-                 'php7-tidy'
-                 'php7-xsl')
+pkgname=('php70'
+                 'php70-apache'
+                 'php70-cgi'
+                 'php70-fpm'
+                 'php70-embed'
+                 'php70-enchant'
+                 'php70-gd'
+                 'php70-intl'
+                 'php70-ldap'
+                 'php70-mcrypt'
+                 'php70-odbc'
+                 'php70-pear'
+                 'php70-pgsql'
+                 'php70-pspell'
+                 'php70-snmp'
+                 'php70-sqlite'
+                 'php70-tidy'
+                 'php70-xsl')
 
 pkgver=7.0.1
 pkgrel=1
@@ -33,14 +33,14 @@ source=("http://us2.php.net/distributions/php-${pkgver}.tar.xz"
         'php.ini.patch' 'apache.conf'
         'php-fpm.service' 'php-fpm.tmpfiles')
 md5sums=('23aba67d57d53145becacb982ed498d5'
-         '06afc44190146dd55049ea3e2be27f44'
+         '89189d3051708dcf1687d0288e7c4118'
          '3bdf401291d4de96caa33d053a000e46'
-         '6b8f6544d4b6a8ef59660f051d2e94d5'
-         '757321e9f23a96c12fab4691309de6c2')
+         'efd879749e4feb23a2f149a6699c2774'
+         '75a73f9dd5f416555a5daf66877d8b16')
 validpgpkeys=('6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3')
 
 # prefix for most paths
-prefix=opt/php7
+prefix=opt/php70
 
 prepare() {
         cd ${srcdir}/${_pkgbase}-${pkgver}
@@ -195,21 +195,20 @@ build() {
         make
 }
 
-# check() {
-#       cd ${srcdir}/build-php
-#       export SNMP_TIMEOUT=1
-#       export SNMP_RETRIES=0
-#       export NO_INTERACTION=1
-#       make test
-#       echo
-# }
+check() {
+       cd ${srcdir}/build-php
+       export SNMP_TIMEOUT=1
+       export SNMP_RETRIES=0
+       export NO_INTERACTION=1
+       make test
+       echo
+}
 
-package_php7() {
+package_php70() {
         pkgdesc='An HTML-embedded scripting language'
         depends=('pcre' 'libxml2' 'curl' 'libzip' 'c-client' 'libedit')
         backup=("${prefix}/etc/php/php.ini")
-        provides=("php7=${pkgver}")
-#       conflicts=('php')
+        provides=("php70=${pkgver}")
         cd ${srcdir}/build-php
         make -j1 INSTALL_ROOT=${pkgdir} install
         install -d -m755 ${pkgdir}/${prefix}/usr/share/pear
@@ -229,176 +228,186 @@ package_php7() {
 
         # Create symlink
         install -d ${pkgdir}/usr/bin
-        ln -sf /${prefix}/usr/bin/php ${pkgdir}/usr/bin/php56
+        ln -sf /${prefix}/usr/bin/php ${pkgdir}/usr/bin/php70
 }
 
-package_php7-cgi() {
+package_php70-cgi() {
         pkgdesc='CGI and FCGI SAPI for PHP'
-        depends=("php7=${pkgver}")
-        provides=("php7-cgi=${pkgver}")
-#       conflicts=('php-cgi')
+        depends=("php70=${pkgver}")
+        provides=("php70-cgi=${pkgver}")
 
         install -D -m755 ${srcdir}/build-cgi/sapi/cgi/php-cgi ${pkgdir}/${prefix}/usr/bin/php-cgi
 }
 
-package_php7-apache() {
+package_php70-apache() {
         pkgdesc='Apache SAPI for PHP'
-        depends=("php7=${pkgver}" 'apache')
+        depends=("php70=${pkgver}" 'apache')
         backup=('etc/httpd/conf/extra/php7_module.conf')
-        provides=("php7-apache=${pkgver}")
-#       conflicts=('php-apache')
+        provides=("php70-apache=${pkgver}")
 
-        install -D -m755 ${srcdir}/build-apache/libs/libphp7.so ${pkgdir}/usr/lib/httpd/modules/libphp7.so
-        install -D -m644 ${srcdir}/apache.conf ${pkgdir}/etc/httpd/conf/extra/php7_module.conf
+        install -D -m755 ${srcdir}/build-apache/libs/libphp7.so ${pkgdir}/usr/lib/httpd/modules/libphp70.so
+        install -D -m644 ${srcdir}/apache.conf ${pkgdir}/etc/httpd/conf/extra/php70_module.conf
 }
 
-package_php7-fpm() {
+package_php70-fpm() {
         pkgdesc='FastCGI Process Manager for PHP'
-        depends=("php7=${pkgver}" 'systemd')
+        depends=("php70=${pkgver}" 'systemd')
         backup=("${prefix}/etc/php/php-fpm.conf")
         install='php-fpm.install'
-        provides=("php7-fpm=${pkgver}")
-#       conflicts=('php-fpm')
+        provides=("php70-fpm=${pkgver}")
 
         install -D -m755 ${srcdir}/build-fpm/sapi/fpm/php-fpm ${pkgdir}/${prefix}/usr/bin/php-fpm
         install -D -m644 ${srcdir}/build-fpm/sapi/fpm/php-fpm.8 ${pkgdir}/${prefix}/usr/share/man/man8/php-fpm.8
         install -D -m644 ${srcdir}/build-fpm/sapi/fpm/php-fpm.conf ${pkgdir}/${prefix}/etc/php/php-fpm.conf
         install -d -m755 ${pkgdir}/${prefix}/etc/php/php-fpm.d
         install -D -m644 ${srcdir}/build-fpm/sapi/fpm/www.conf ${pkgdir}/${prefix}/etc/php/php-fpm.d/www.conf
-        sed -i "s/listen =.*/listen = \/run\/php7-fpm\/php-fpm.sock/" ${pkgdir}/${prefix}/etc/php/php-fpm.d/www.conf
-        install -D -m644 ${srcdir}/php-fpm.tmpfiles ${pkgdir}/usr/lib/tmpfiles.d/php7-fpm.conf
-        install -D -m644 ${srcdir}/php-fpm.service ${pkgdir}/usr/lib/systemd/system/php7-fpm.service
+        sed -i "s/listen =.*/listen = \/run\/php70-fpm\/php-fpm.sock/" ${pkgdir}/${prefix}/etc/php/php-fpm.d/www.conf
+        install -D -m644 ${srcdir}/php-fpm.tmpfiles ${pkgdir}/usr/lib/tmpfiles.d/php70-fpm.conf
+        install -D -m644 ${srcdir}/php-fpm.service ${pkgdir}/usr/lib/systemd/system/php70-fpm.service
 }
 
-package_php7-embed() {
+package_php70-embed() {
         pkgdesc='Embedded PHP SAPI library'
-        depends=("php7=${pkgver}")
-        provides=("php7-embed=${pkgver}")
-#       conflicts=('php-embed')
+        depends=("php70=${pkgver}")
+        provides=("php70-embed=${pkgver}")
 
-        install -D -m755 ${srcdir}/build-embed/libs/libphp7.so ${pkgdir}/usr/lib/libphp7.so
+        install -D -m755 ${srcdir}/build-embed/libs/libphp7.so ${pkgdir}/usr/lib/libphp70.so
         install -D -m644 ${srcdir}/${_pkgbase}-${pkgver}/sapi/embed/php_embed.h ${pkgdir}/${prefix}/usr/include/php/sapi/embed/php_embed.h
 }
 
-package_php7-pear() {
-    pkgdesc='PHP Extension and Application Repository'
-    depends=("php7=${pkgver}")
-#    conflicts=('php-pear')
-    backup=("${prefix}/etc/php/pear.conf")
+package_php70-pear() {
+        pkgdesc='PHP Extension and Application Repository'
+        depends=("php70=${pkgver}")
+        backup=("${prefix}/etc/php/pear.conf")
 
-    cd ${srcdir}/build-pear
-    make install-pear INSTALL_ROOT=${pkgdir}
-    rm -rf ${pkgdir}/${prefix}/usr/share/pear/.{channels,depdb,depdblock,filemap,lock,registry}
+        cd ${srcdir}/build-pear
+        make install-pear INSTALL_ROOT=${pkgdir}
+        rm -rf ${pkgdir}/${prefix}/usr/share/pear/.{channels,depdb,depdblock,filemap,lock,registry}
 }
 
-package_php7-enchant() {
+package_php70-enchant() {
         pkgdesc='enchant module for PHP'
-        depends=("php7=${pkgver}" 'enchant')
-        provides=("php7-enchant=${pkgver}")
-#       conflicts=('php-enchant')
+        depends=("php70=${pkgver}" 'enchant')
+        provides=("php70-enchant=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=enchant.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/enchant.ini
         install -D -m755 ${srcdir}/build-php/modules/enchant.so ${pkgdir}/${prefix}/usr/lib/php/modules/enchant.so
 }
 
-package_php7-gd() {
+package_php70-gd() {
         pkgdesc='gd module for PHP'
-        depends=("php7=${pkgver}" 'gd')
-        provides=("php7-gd=${pkgver}")
-#       conflicts=('php-gd')
+        depends=("php70=${pkgver}" 'gd')
+        provides=("php70-gd=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=gd.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/gd.ini
         install -D -m755 ${srcdir}/build-php/modules/gd.so ${pkgdir}/${prefix}/usr/lib/php/modules/gd.so
 }
 
-package_php7-intl() {
+package_php70-intl() {
         pkgdesc='intl module for PHP'
-        depends=("php7=${pkgver}" 'icu')
-        provides=("php7-intl=${pkgver}")
-#       conflicts=('php-intl')
+        depends=("php70=${pkgver}" 'icu')
+        provides=("php70-intl=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=intl.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/intl.ini
         install -D -m755 ${srcdir}/build-php/modules/intl.so ${pkgdir}/${prefix}/usr/lib/php/modules/intl.so
 }
 
-package_php7-ldap() {
+package_php70-ldap() {
         pkgdesc='ldap module for PHP'
-        depends=("php7=${pkgver}" 'libldap')
-        provides=("php7-ldap=${pkgver}")
-#       conflicts=('php-ldap')
+        depends=("php70=${pkgver}" 'libldap')
+        provides=("php70-ldap=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=ldap.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/ldap.ini
         install -D -m755 ${srcdir}/build-php/modules/ldap.so ${pkgdir}/${prefix}/usr/lib/php/modules/ldap.so
 }
 
-package_php7-mcrypt() {
+package_php70-mcrypt() {
         pkgdesc='mcrypt module for PHP'
-        depends=("php7=${pkgver}" 'libmcrypt' 'libltdl')
-        provides=("php7-mcrypt=${pkgver}")
-#       conflicts=('php-mcrypt')
+        depends=("php70=${pkgver}" 'libmcrypt' 'libltdl')
+        provides=("php70-mcrypt=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=mcrypt.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/mcrypt.ini
         install -D -m755 ${srcdir}/build-php/modules/mcrypt.so ${pkgdir}/${prefix}/usr/lib/php/modules/mcrypt.so
 }
 
 
-package_php7-odbc() {
+package_php70-odbc() {
         pkgdesc='ODBC modules for PHP'
-        depends=("php7=${pkgver}" 'unixodbc')
-        provides=("php7-odbc=${pkgver}")
-#       conflicts=('php-odbc')
+        depends=("php70=${pkgver}" 'unixodbc')
+        provides=("php70-odbc=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=odbc.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/odbc.ini
+        echo "extension=pdo_odbc.so" >> ${pkgdir}/${php_prefix}/etc/php/conf.d/odbc.ini
         install -D -m755 ${srcdir}/build-php/modules/odbc.so ${pkgdir}/${prefix}/usr/lib/php/modules/odbc.so
         install -D -m755 ${srcdir}/build-php/modules/pdo_odbc.so ${pkgdir}/${prefix}/usr/lib/php/modules/pdo_odbc.so
 }
 
-package_php7-pgsql() {
+package_php70-pgsql() {
         pkgdesc='PostgreSQL modules for PHP'
-        depends=("php7=${pkgver}" 'postgresql-libs')
-        provides=("php7-pgsql=${pkgver}")
-#       conflicts=('php-pgsql')
+        depends=("php70=${pkgver}" 'postgresql-libs')
+        provides=("php70-pgsql=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=pgsql.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/pgsql.ini
+        echo "extension=pdo_pgsql.so" >> ${pkgdir}/${php_prefix}/etc/php/conf.d/pgsql.ini
         install -D -m755 ${srcdir}/build-php/modules/pgsql.so ${pkgdir}/${prefix}/usr/lib/php/modules/pgsql.so
         install -D -m755 ${srcdir}/build-php/modules/pdo_pgsql.so ${pkgdir}/${prefix}/usr/lib/php/modules/pdo_pgsql.so
 }
 
-package_php7-pspell() {
+package_php70-pspell() {
         pkgdesc='pspell module for PHP'
-        depends=("php7=${pkgver}" 'aspell')
-        provides=("php7-pspell=${pkgver}")
-#       conflicts=('php-pspell')
+        depends=("php70=${pkgver}" 'aspell')
+        provides=("php70-pspell=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=pspell.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/pspell.ini
         install -D -m755 ${srcdir}/build-php/modules/pspell.so ${pkgdir}/${prefix}/usr/lib/php/modules/pspell.so
 }
 
-package_php7-snmp() {
+package_php70-snmp() {
         pkgdesc='snmp module for PHP'
-        depends=("php7=${pkgver}" 'net-snmp')
-        provides=("php7-snmp=${pkgver}")
-#       conflicts=('php-snmp')
+        depends=("php70=${pkgver}" 'net-snmp')
+        provides=("php70-snmp=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=snmp.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/snmp.ini
         install -D -m755 ${srcdir}/build-php/modules/snmp.so ${pkgdir}/${prefix}/usr/lib/php/modules/snmp.so
 }
 
-package_php7-sqlite() {
+package_php70-sqlite() {
         pkgdesc='sqlite module for PHP'
-        depends=("php7=${pkgver}" 'sqlite')
-        provides=("php7-sqlite=${pkgver}")
-#       conflicts=('php-sqlite')
+        depends=("php70=${pkgver}" 'sqlite')
+        provides=("php70-sqlite=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=sqlite3.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/sqlite.ini
+        echo "extension=pdo_sqlite.so" >> ${pkgdir}/${php_prefix}/etc/php/conf.d/sqlite.ini
         install -D -m755 ${srcdir}/build-php/modules/sqlite3.so ${pkgdir}/${prefix}/usr/lib/php/modules/sqlite3.so
         install -D -m755 ${srcdir}/build-php/modules/pdo_sqlite.so ${pkgdir}/${prefix}/usr/lib/php/modules/pdo_sqlite.so
 }
 
-package_php7-tidy() {
+package_php70-tidy() {
         pkgdesc='tidy module for PHP'
-        depends=("php7=${pkgver}" 'tidyhtml')
-        provides=("php7-tidy=${pkgver}")
-#       conflicts=('php-tidy')
+        depends=("php70=${pkgver}" 'tidyhtml')
+        provides=("php70-tidy=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=tidy.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/tidy.ini
         install -D -m755 ${srcdir}/build-php/modules/tidy.so ${pkgdir}/${prefix}/usr/lib/php/modules/tidy.so
 }
 
-package_php7-xsl() {
+package_php70-xsl() {
         pkgdesc='xsl module for PHP'
-        depends=("php7=${pkgver}" 'libxslt')
-        provides=("php7-xsl=${pkgver}")
-#       conflicts=('php-xsl')
+        depends=("php70=${pkgver}" 'libxslt')
+        provides=("php70-xsl=${pkgver}")
 
+        install -d ${pkgdir}/${php_prefix}/etc/php/conf.d
+        echo "extension=xsl.so" > ${pkgdir}/${php_prefix}/etc/php/conf.d/xsl.ini
         install -D -m755 ${srcdir}/build-php/modules/xsl.so ${pkgdir}/${prefix}/usr/lib/php/modules/xsl.so
 }
