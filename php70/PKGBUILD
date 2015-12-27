@@ -242,7 +242,7 @@ package_php70-cgi() {
 package_php70-apache() {
         pkgdesc='Apache SAPI for PHP'
         depends=("php70=${pkgver}" 'apache')
-        backup=('etc/httpd/conf/extra/php7_module.conf')
+        backup=('etc/httpd/conf/extra/php70_module.conf')
         provides=("php70-apache=${pkgver}")
 
         install -D -m755 ${srcdir}/build-apache/libs/libphp7.so ${pkgdir}/usr/lib/httpd/modules/libphp70.so
