@@ -1,0 +1,40 @@
+# Maintainer: Daniel Speichert <daniel@speichert.pl>
+pkgname=gonask
+provides=('gonask')
+pkgver=r48.5d8c32a
+pkgrel=1
+pkgdesc='NASK registry CLI and REST tool'
+arch=('i686' 'x86_64')
+license=('custom')
+depends=('go' 'git' 'mercurial')
+backup=('etc/gonask/gonask.gcfg')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+source=(git+ssh://git@github.com/DSpeichert/gonask.git)
+md5sums=('SKIP')
+
+build() {
+    mkdir -p go/bin
+    export GOPATH=`pwd`/go
+    export GOBIN=`pwd`/go/bin
+    cd $pkgname
+    go get
+    go build -ldflags "-X main.buildtime=`date -u '+%Y-%m-%d_%H:%M:%S'` -X main.buildver=${pkgver}"
+}
+
+package() {
+  cd $pkgname
+  
+  install -D -m755 "$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -D -m600 gonask.gcfg.sample "$pkgdir/etc/gonask/gonask.gcfg"
+  install -D -m644 gonask.service "$pkgdir/lib/systemd/system/gonask.service"
+}
+
+# vim:set ts=2 sw=2 et:
