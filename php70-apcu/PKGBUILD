@@ -1,5 +1,5 @@
 # Contributor: Daniel Speichert <daniel@speichert.pl>
-pkgname=php77-apcu
+pkgname=php70-apcu
 pkgver=5.1.2
 pkgrel=1
 pkgdesc="APCu - APC User Cache"

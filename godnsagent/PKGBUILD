@@ -1,13 +1,13 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
-pkgname=gonask
-provides=('gonask')
-pkgver=r53.c814809
+pkgname=godnsagent
+pkgver=r13.a7023c8
 pkgrel=1
-pkgdesc='NASK registry CLI and REST tool'
+pkgdesc='DNS Server'
+url=https://github.com/DevelopersPL/godnsagent
 arch=('i686' 'x86_64')
-license=('custom')
-makedepends=('go' 'git')
-backup=('etc/gonask/gonask.gcfg')
+license=('MIT')
+makedepends=('go' 'git' 'mercurial')
+backup=('etc/default/godnsagent')
 
 pkgver() {
   cd "$srcdir/$pkgname"
@@ -17,7 +17,7 @@ pkgver() {
   )
 }
 
-source=(git+ssh://git@github.com/DSpeichert/gonask.git)
+source=(git+https://github.com/DevelopersPL/godnsagent.git)
 md5sums=('SKIP')
 
 build() {
@@ -33,10 +33,8 @@ package() {
   cd $pkgname
   
   install -D -m755 "$pkgname" "$pkgdir/usr/bin/$pkgname"
-  install -d -m700 "$pkgdir/etc/gonask"
-  install -m600 gonask.gcfg.sample "$pkgdir/etc/gonask/gonask.gcfg"
-  install -D -m644 gonask.service "$pkgdir/usr/lib/systemd/system/gonask.service"
-  install -D -m644 bash_completion "$pkgdir/usr/share/bash-completion/completions/gonask"
+  install -D -m600 godnsagent.defaults "$pkgdir/etc/default/godnsagent"
+  install -D -m644 godnsagent.service "$pkgdir/usr/lib/systemd/system/godnsagent.service"
 }
 
 # vim:set ts=2 sw=2 et:

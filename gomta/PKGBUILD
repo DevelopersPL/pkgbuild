@@ -1,0 +1,45 @@
+# Maintainer: Daniel Speichert <daniel@speichert.pl>
+pkgname=gomta
+provides=('gomta')
+pkgver=r12.e9a1bae
+pkgrel=1
+pkgdesc='Spigu Web Cloud: MTA'
+arch=('i686' 'x86_64')
+license=('custom')
+makedepends=('go' 'git')
+backup=('etc/default/gomta')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+source=(git+ssh://git@github.com/DSpeichert/gomta.git)
+md5sums=('SKIP')
+
+build() {
+    mkdir -p go/bin
+    export GOPATH=`pwd`/go
+    export GOBIN=`pwd`/go/bin
+    cd $pkgname
+    go get
+    go build -ldflags "-X main.buildtime=`date -u '+%Y-%m-%d_%H:%M:%S'` -X main.buildver=${pkgver}"
+}
+
+package() {
+  #install -Dm755 "$pkgname/$pkgname" "$pkgdir/usr/bin/$pkgname"
+  # begin temporary hack
+    # package the downloaded binary until Go compiler is patched for net/textproto
+    mkdir -p "$pkgdir/usr/bin"
+    wget https://marley.dondaniello.com/gomta -O "$pkgdir/usr/bin/$pkgname"
+    chmod 0755 "$pkgdir/usr/bin/$pkgname"
+  # end temporary hack
+  install -Dm644 "$pkgname/etc/gomta.service" "$pkgdir/usr/lib/systemd/system/gomta.service"
+  install -Dm644 "$pkgname/etc/com.github.DevelopersPL.gomta.conf" "$pkgdir/etc/dbus-1/system.d/com.github.DevelopersPL.gomta.conf"
+  install -Dm644 "$pkgname/etc/bash_completion" "$pkgdir/usr/share/bash-completion/completions/gomta"
+}
+
+# vim:set ts=2 sw=2 et:
