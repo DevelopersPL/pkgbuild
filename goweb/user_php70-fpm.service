@@ -1,0 +1,15 @@
+[Unit]
+Description=The PHP 7.0 FastCGI Process Manager
+ConditionPathExists=%h/.config/php70-fpm.conf
+
+[Service]
+Type=notify
+PIDFile=%t/php-fpm.pid
+ExecStartPre=/usr/bin/mkdir -p %t/php70-fpm
+ExecStartPre=/opt/php70/usr/bin/php-fpm -y %h/.config/php70-fpm.conf -t
+ExecStart=/opt/php70/usr/bin/php-fpm --nodaemonize -y %h/.config/php70-fpm.conf
+ExecReload=/bin/kill -USR2 $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

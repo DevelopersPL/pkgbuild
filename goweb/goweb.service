@@ -1,0 +1,15 @@
+[Unit]
+Description=Spigu Web Cloud: Web Node Agent
+After=network.target mysqld.service
+
+[Service]
+Environment="CONFIG=/etc/goweb.gcfg"
+BusName=com.github.DevelopersPL.goweb
+ExecStartPre=-/usr/bin/tc qdisc add dev eth0 root handle 10: htb
+ExecStartPre=-/usr/bin/tc filter add dev eth0 parent 10: protocol ip prio 10 handle 1: cgroup
+ExecStart=/usr/bin/goweb daemon
+Restart=always
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

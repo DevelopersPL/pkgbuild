@@ -1,0 +1,15 @@
+[Unit]
+Description=The PHP 5.6 FastCGI Process Manager
+ConditionPathExists=%h/.config/php56-fpm.conf
+
+[Service]
+Type=notify
+PIDFile=%t/php-fpm.pid
+ExecStartPre=/usr/bin/mkdir -p %t/php56-fpm
+ExecStartPre=/opt/php56/usr/bin/php-fpm -y %h/.config/php56-fpm.conf -t
+ExecStart=/opt/php56/usr/bin/php-fpm --nodaemonize -y %h/.config/php56-fpm.conf
+ExecReload=/bin/kill -USR2 $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,54 @@
+# Maintainer: Daniel Speichert <daniel@speichert.pl>
+pkgname=goweb
+provides=('goweb')
+pkgver=r29.67f572b
+pkgrel=1
+pkgdesc='Spigu Web Cloud: Web Node Agent'
+arch=('i686' 'x86_64')
+license=('custom')
+depends=('php56-fpm' 'php70-fpm' 'mariadb' 'quota-tools' 'linux-grsec')
+makedepends=('go' 'git')
+optdepends=('bash-completion' 'hidepid')
+backup=('etc/goweb.gcfg')
+install='goweb.install'
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+source=(git+ssh://git@github.com/DSpeichert/goweb.git
+    'bash_completion' 'com.github.DevelopersPL.goweb.conf' 'goweb.service'
+    'user_php56-fpm.service' 'user_php70-fpm.service' 'systemd-user-service.conf')
+md5sums=('SKIP'
+         '83a6a2ea5dae0142aabb27ba2758c3e4'
+         '0014dd109b8e52cbd217230d8725d2d8'
+         '27aa598a8c59da461351bb619c55fedd'
+         '574f4937c21855470d1bdf38a42ee0c2'
+         'ed23e1f58fe15c82338b1fa57ef542eb'
+         'e41268c93666da69d5d022ed80b1d9ee')
+
+build() {
+    mkdir -p go/bin
+    export GOPATH=`pwd`/go
+    export GOBIN=`pwd`/go/bin
+    cd $pkgname
+    go get
+    go build -ldflags "-X main.buildtime=`date -u '+%Y-%m-%d_%H:%M:%S'` -X main.buildver=${pkgver}"
+}
+
+package() {
+  install -D -m755 "$pkgname/$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -D -m600 "$pkgname/goweb.gcfg.sample" "$pkgdir/etc/goweb.gcfg"
+  install -D -m644 goweb.service "$pkgdir/usr/lib/systemd/system/goweb.service"
+  install -D -m644 bash_completion "$pkgdir/usr/share/bash-completion/completions/gonask"
+  install -D -m644 com.github.DevelopersPL.goweb.conf "$pkgdir/etc/dbus-1/system.d/com.github.DevelopersPL.goweb.conf"
+  install -D -m644 user_php56-fpm.service "$pkgdir/etc/systemd/user/php56-fpm.service"
+  install -D -m644 user_php70-fpm.service "$pkgdir/etc/systemd/user/php70-fpm.service"
+  install -D -m644 systemd-user-service.conf  "$pkgdir/etc/systemd/system/user@.service.d/goweb.conf"
+}
+
+# vim:set ts=2 sw=2 et:
