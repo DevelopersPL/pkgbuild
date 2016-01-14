@@ -1,6 +1,7 @@
 [Unit]
 Description=Spigu Web Cloud: Web Node Agent
 After=network.target mysqld.service
+Requires=mysqld.service
 
 [Service]
 Environment="CONFIG=/etc/goweb.gcfg"

@@ -1,0 +1,21 @@
+# Maintainer: Daniel Speichert <daniel@speichert.pl>
+pkgname=ipset-nuclear
+pkgver=0.1
+pkgrel=4
+pkgdesc='High-risk ipset blocking'
+arch=('any')
+license=('custom')
+depends=('iptables' 'ipset' 'wget')
+install='ipset-nuclear.install'
+source=('ipset-nuclear' 'ipset-nuclear.service' 'ipset-nuclear.timer')
+md5sums=('7e9e21814d15d8c731dbf170c6f715ba'
+         'ac8ceffb1f848e0989065d7186ddfc8d'
+         '12898fe1d8d66d4e0c0e734bc2f75922')
+
+package() {
+  install -Dm755 "$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -Dm644 "$pkgname.service" "$pkgdir/usr/lib/systemd/system/$pkgname.service"
+  install -Dm644 "$pkgname.timer" "$pkgdir/usr/lib/systemd/system/$pkgname.timer"
+}
+
+# vim:set ts=2 sw=2 et:

@@ -15,4 +15,5 @@ post_upgrade() {
 pre_remove() {
 	usr/bin/systemctl --global disable php56-fpm
 	usr/bin/systemctl --global disable php70-fpm
+	usr/bin/systemctl stop goweb
 }

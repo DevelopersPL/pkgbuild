@@ -1,13 +1,14 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=gonask
 provides=('gonask')
-pkgver=r53.c814809
+pkgver=r56.6329db3
 pkgrel=1
 pkgdesc='NASK registry CLI and REST tool'
 arch=('i686' 'x86_64')
 license=('custom')
 makedepends=('go' 'git')
 backup=('etc/gonask/gonask.gcfg')
+install='gonask.install'
 
 pkgver() {
   cd "$srcdir/$pkgname"

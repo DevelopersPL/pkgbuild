@@ -1,0 +1,14 @@
+post_install() {
+	usr/bin/systemctl daemon-reload
+	usr/bin/systemctl enable ipset-nuclear.service
+	usr/bin/systemctl enable ipset-nuclear.timer
+}
+
+post_upgrade() {
+	post_install
+}
+
+pre_remove() {
+	usr/bin/systemctl disable ipset-nuclear.service
+	usr/bin/systemctl disable ipset-nuclear.timer
+}

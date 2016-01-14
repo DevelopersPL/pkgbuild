@@ -1,0 +1,9 @@
+[Unit]
+Description=Run ipset-nuclear periodically
+
+[Timer]
+OnUnitActiveSec=12h 1m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

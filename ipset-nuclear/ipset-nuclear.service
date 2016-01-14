@@ -1,0 +1,11 @@
+[Unit]
+Description=High-risk ipset blocking
+After=network.target iptables.service ipset.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ipset-nuclear
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target
