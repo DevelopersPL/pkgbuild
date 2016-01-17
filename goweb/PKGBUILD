@@ -1,7 +1,7 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=goweb
 provides=('goweb')
-pkgver=r32.9057d64
+pkgver=r39.5396d67
 pkgrel=1
 pkgdesc='Spigu Web Cloud: Web Node Agent'
 arch=('i686' 'x86_64')
@@ -25,11 +25,11 @@ source=(git+ssh://git@github.com/DSpeichert/goweb.git
     'user_php56-fpm.service' 'user_php70-fpm.service' 'systemd-user-service.conf')
 md5sums=('SKIP'
          '83a6a2ea5dae0142aabb27ba2758c3e4'
-         '0014dd109b8e52cbd217230d8725d2d8'
-         '0c88e77b56304060119edf9c72537fe2'
-         '574f4937c21855470d1bdf38a42ee0c2'
-         'ed23e1f58fe15c82338b1fa57ef542eb'
-         'e41268c93666da69d5d022ed80b1d9ee')
+         '4c772fac059261b371d1b1a4e38bf06a'
+         '89fcbcf52739e85fc2de3c56dc6dc697'
+         '7995b2c2c11cecf6f263b7b3bf9a72de'
+         'b38731b08dd82620b6fd8a8f731848b2'
+         'b203e45a72a28d49da594c2e8b79cffc')
 
 build() {
     mkdir -p go/bin

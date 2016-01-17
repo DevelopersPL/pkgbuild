@@ -1,0 +1,12 @@
+post_install() {
+	usr/bin/systemctl daemon-reload
+}
+
+post_upgrade() {
+	post_install
+	usr/bin/systemctl try-restart gomta
+}
+
+pre_remove() {
+	usr/bin/systemctl stop gomta
+}

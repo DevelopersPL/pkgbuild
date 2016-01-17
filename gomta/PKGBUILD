@@ -1,13 +1,14 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=gomta
 provides=('gomta')
-pkgver=r12.e9a1bae
+pkgver=r15.d1c1965
 pkgrel=1
 pkgdesc='Spigu Web Cloud: MTA'
 arch=('i686' 'x86_64')
 license=('custom')
 makedepends=('go' 'git')
 backup=('etc/default/gomta')
+install='gomta.install'
 
 pkgver() {
   cd "$srcdir/$pkgname"

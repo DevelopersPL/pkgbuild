@@ -11,6 +11,8 @@ ExecStartPre=-/usr/bin/tc filter add dev eth0 parent 10: protocol ip prio 10 han
 ExecStart=/usr/bin/goweb daemon
 Restart=always
 StartLimitInterval=0
+CPUQuota=100%
+MemoryLimit=4G
 
 [Install]
 WantedBy=multi-user.target
