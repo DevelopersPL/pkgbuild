@@ -18,8 +18,8 @@ BLUETACK=(xpbqleszmajjesnzddhv lujdnbasfaaixitgmxpp usrcshglbiilevmyfhse zbdlwrq
 # BLUETACKALIAS=(Ads Adservers)
 # BLUETACK=(dgxtneitpuvgqqcpfulq zhogegszwduurnvsyhdf)
 
-# NOW + 12 hours
-MAX_MTIME=$(($(date +"%s")+12*60*60))
+# NOW - 12 hours
+MIN_MTIME=$(($(date +"%s")-12*60*60))
 
 ipset create -exist blocks hash:net maxelem 4294967295
 ipset create -exist blocks-tmp hash:net maxelem 4294967295
@@ -28,7 +28,7 @@ ipset flush blocks-tmp
 # TOR
 # https://check.torproject.org/exit-addresses
 echo "Importing TOR blocks..."
-if [ ! -f $LISTDIR/tor-exit-addresses.txt ] || [ $(stat --printf="%Y" $LISTDIR/tor-exit-addresses.txt) -gt $MAX_MTIME ]; then
+if [ ! -f $LISTDIR/tor-exit-addresses.txt ] || [ $(stat --printf="%Y" $LISTDIR/tor-exit-addresses.txt) -lt $MIN_MTIME ]; then
     wget -q https://check.torproject.org/exit-addresses -O $LISTDIR/tor-exit-addresses.txt
 fi
 awk '!x[$0]++' $LISTDIR/tor-exit-addresses.txt | grep ExitAddress | awk '{ print "add -exist blocks-tmp ",$2 }' | ipset restore
@@ -36,7 +36,7 @@ awk '!x[$0]++' $LISTDIR/tor-exit-addresses.txt | grep ExitAddress | awk '{ print
 # country zones
 echo "Importing country zones..."
 for country in ${COUNTRIES[@]}; do
-    if [ ! -f $LISTDIR/$country.zone ] || [ $(stat --printf="%Y" $LISTDIR/$country.zone) -gt $MAX_MTIME ]; then
+    if [ ! -f $LISTDIR/$country.zone ] || [ $(stat --printf="%Y" $LISTDIR/$country.zone) -lt $MIN_MTIME ]; then
         wget -q http://www.ipdeny.com/ipblocks/data/countries/$country.zone -O $LISTDIR/$country.zone
         fi
     awk '!x[$0]++' $LISTDIR/$country.zone | grep  -v \# | grep -v ^$ |  grep -v 127\.0\.0 | sed -e "s/^/add\ \-exist\ blocks\-tmp\ /" | ipset restore
@@ -46,9 +46,9 @@ done
 echo "Importing iblocklists..."
 i=0
 for list in ${BLUETACK[@]}; do
-    if [ ! -f $LISTDIR/${BLUETACKALIAS[i]} ] || [ $(stat --printf="%Y" $LISTDIR/${BLUETACKALIAS[i]}) -gt $MAX_MTIME ]; then
+    if [ ! -f $LISTDIR/${BLUETACKALIAS[i]} ] || [ $(stat --printf="%Y" $LISTDIR/${BLUETACKALIAS[i]}) -lt $MIN_MTIME ]; then
         wget -q "http://list.iblocklist.com/?list=${list}&fileformat=p2p&archiveformat=gz" -O $LISTDIR/${BLUETACKALIAS[i]}.gz
-        gunzip $LISTDIR/${BLUETACKALIAS[i]}.gz
+        gunzip -f $LISTDIR/${BLUETACKALIAS[i]}.gz
     fi
     awk '!x[$0]++' $LISTDIR/${BLUETACKALIAS[i]} | grep  -v \# | grep -v ^$ |  grep -v 127\.0\.0 | awk '{split($0,a,":"); print "add -exist blocks-tmp ",a[2]}' | ipset restore
     i=$((i+1))

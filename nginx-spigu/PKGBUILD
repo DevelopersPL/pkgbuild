@@ -2,7 +2,7 @@
 pkgname=nginx-spigu
 provides=('nginx')
 conflicts=('nginx')
-pkgver=1.9.9
+pkgver=1.9.10
 pkgrel=1
 pkgdesc='Lightweight HTTP server and IMAP/POP3 proxy server, spigu release'
 arch=('i686' 'x86_64')
@@ -37,7 +37,7 @@ source=($url/download/nginx-$pkgver.tar.gz
         git+https://github.com/slact/nchan.git
         git+https://github.com/vozlt/nginx-module-vts.git
         )
-md5sums=('50fdfa08e93ead7a111cba5a5f5735af'
+md5sums=('64cc970988356a5e0fc4fcd1ab84fe57'
          'ce9a06bcaf66ec4a3c4eb59b636e0dfd'
          '3441ce77cdd1aab6f0ab7e212698a8a7'
          '4d2e9c834fa2e60cd8b23185b93d2e2e'
@@ -99,7 +99,6 @@ build() {
     --with-http_gzip_static_module \
     --with-http_image_filter_module \
     --add-module=../nginx-rtmp-module \
-    --add-module=../ngx_pagespeed-release-${_psver}-beta \
     --add-module=../ngx-fancyindex \
     --add-module=../headers-more-nginx-module \
     --add-module=../nginx-upload-progress-module \
@@ -108,6 +107,7 @@ build() {
     --add-module=../ngx_http_auth_pam_module \
     --add-module=../nchan \
     --add-module=../nginx-module-vts
+    #--add-module=../ngx_pagespeed-release-${_psver}-beta \
   make
 }
 

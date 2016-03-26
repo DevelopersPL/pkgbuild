@@ -19,7 +19,7 @@ pkgname=('php70'
                  'php70-tidy'
                  'php70-xsl')
 
-pkgver=7.0.1
+pkgver=7.0.2
 pkgrel=1
 arch=('i686' 'x86_64')
 license=('PHP')
@@ -32,9 +32,9 @@ makedepends=('apache' 'c-client' 'postgresql-libs' 'libldap' 'postfix'
 source=("http://us2.php.net/distributions/php-${pkgver}.tar.xz"
         'php.ini.patch' 'apache.conf'
         'php-fpm.service' 'php-fpm.tmpfiles')
-md5sums=('23aba67d57d53145becacb982ed498d5'
+md5sums=('ce5964672e4ec0b66ff088a6bafde8c7'
          '89189d3051708dcf1687d0288e7c4118'
-         '3bdf401291d4de96caa33d053a000e46'
+         'a89578cd6fdf1dcfd8d5f48bce1e0fd4'
          'efd879749e4feb23a2f149a6699c2774'
          '75a73f9dd5f416555a5daf66877d8b16')
 validpgpkeys=('6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3')

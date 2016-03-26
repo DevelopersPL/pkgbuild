@@ -19,7 +19,7 @@ pkgname=('php56'
                  'php56-tidy'
                  'php56-xsl')
 
-pkgver=5.6.16
+pkgver=5.6.17
 pkgrel=1
 arch=('i686' 'x86_64')
 license=('PHP')
@@ -32,7 +32,7 @@ makedepends=('apache' 'c-client' 'postgresql-libs' 'libldap' 'postfix'
 source=("http://us2.php.net/distributions/php-${pkgver}.tar.xz"
         'php.ini.patch' 'apache.conf'
         'php-fpm.service' 'php-fpm.tmpfiles')
-md5sums=('3f1d999ed1f9cb5713c9a0161c557f2f'
+md5sums=('5e080e4b7df5db24f1b64313f8114bd8'
          'fec9da94f58074204b42c1f7da43c496'
          '2825dd0b8d3ba61689f6b10ee6ad0318'
          'ac232d695bbcf7fcf0f2748e0ddb52d5'

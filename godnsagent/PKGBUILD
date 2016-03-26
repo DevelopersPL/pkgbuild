@@ -1,6 +1,6 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=godnsagent
-pkgver=r15.724c37b
+pkgver=r22.0dfa410
 pkgrel=1
 pkgdesc='DNS Server'
 url=https://github.com/DevelopersPL/godnsagent
@@ -8,6 +8,7 @@ arch=('i686' 'x86_64')
 license=('MIT')
 makedepends=('go' 'git' 'mercurial')
 backup=('etc/default/godnsagent')
+install='godnsagent.install'
 
 pkgver() {
   cd "$srcdir/$pkgname"

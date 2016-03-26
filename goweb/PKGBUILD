@@ -1,7 +1,7 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=goweb
 provides=('goweb')
-pkgver=r39.5396d67
+pkgver=r45.5626613
 pkgrel=1
 pkgdesc='Spigu Web Cloud: Web Node Agent'
 arch=('i686' 'x86_64')

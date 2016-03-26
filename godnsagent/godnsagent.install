@@ -4,9 +4,9 @@ post_install() {
 
 post_upgrade() {
 	post_install
-	usr/bin/systemctl try-restart gonask
+	usr/bin/systemctl try-restart godnsagent
 }
 
 pre_remove() {
-	usr/bin/systemctl stop gonask
+	usr/bin/systemctl stop godnsagent
 }

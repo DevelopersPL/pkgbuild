@@ -1,7 +1,7 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=gonask
 provides=('gonask')
-pkgver=r56.6329db3
+pkgver=r62.19d4a80
 pkgrel=1
 pkgdesc='NASK registry CLI and REST tool'
 arch=('i686' 'x86_64')
