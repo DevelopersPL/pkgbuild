@@ -31,13 +31,7 @@ build() {
 }
 
 package() {
-  #install -Dm755 "$pkgname/$pkgname" "$pkgdir/usr/bin/$pkgname"
-  # begin temporary hack
-    # package the downloaded binary until Go compiler is patched for net/textproto
-    mkdir -p "$pkgdir/usr/bin"
-    wget https://marley.dondaniello.com/gomta -O "$pkgdir/usr/bin/$pkgname"
-    chmod 0755 "$pkgdir/usr/bin/$pkgname"
-  # end temporary hack
+  install -Dm755 "$pkgname/$pkgname" "$pkgdir/usr/bin/$pkgname"
   install -Dm644 "$pkgname/etc/gomta.service" "$pkgdir/usr/lib/systemd/system/gomta.service"
   install -Dm644 "$pkgname/etc/com.github.DevelopersPL.gomta.conf" "$pkgdir/etc/dbus-1/system.d/com.github.DevelopersPL.gomta.conf"
   install -Dm644 "$pkgname/etc/bash_completion" "$pkgdir/usr/share/bash-completion/completions/gomta"
