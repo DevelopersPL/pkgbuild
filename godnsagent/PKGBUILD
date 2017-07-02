@@ -1,6 +1,6 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=godnsagent
-pkgver=r24.d77cd82
+pkgver=r31.d92cd60
 pkgrel=1
 pkgdesc='DNS Server'
 url=https://github.com/DevelopersPL/godnsagent

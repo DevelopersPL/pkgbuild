@@ -2,13 +2,13 @@
 pkgname=nginx-spigu
 provides=('nginx')
 conflicts=('nginx')
-pkgver=1.9.10
+pkgver=1.13.2
 pkgrel=1
 pkgdesc='Lightweight HTTP server and IMAP/POP3 proxy server, spigu release'
 arch=('i686' 'x86_64')
 url='http://nginx.org'
 license=('custom')
-depends=('pcre' 'zlib' 'openssl' 'geoip')
+depends=('pcre' 'zlib' 'openssl' 'geoip' 'gd' 'libzip' 'luajit')
 backup=('etc/nginx/fastcgi.conf'
         'etc/nginx/fastcgi_params'
         'etc/nginx/koi-win'
@@ -20,14 +20,16 @@ backup=('etc/nginx/fastcgi.conf'
         'etc/nginx/win-utf'
         'etc/logrotate.d/nginx'
         'usr/share/nginx/html/crossdomain.xml')
-_psver=1.10.33.1
+install='nginx.install'
+_psver=1.12.34.2
 source=($url/download/nginx-$pkgver.tar.gz
         nginx.service
         logrotate
         crossdomain.xml
+        mod_zip.patch
         git+https://github.com/arut/nginx-rtmp-module.git
-        https://github.com/pagespeed/ngx_pagespeed/archive/release-${_psver}-beta.tar.gz
-        https://dl.google.com/dl/page-speed/psol/${_psver}.tar.gz
+#        https://github.com/pagespeed/ngx_pagespeed/archive/v${_psver}-beta.tar.gz
+#        https://dl.google.com/dl/page-speed/psol/${_psver}.tar.gz
         git+https://github.com/aperezdc/ngx-fancyindex.git
         git+https://github.com/openresty/headers-more-nginx-module.git
         git+https://github.com/masterzen/nginx-upload-progress-module.git
@@ -36,14 +38,19 @@ source=($url/download/nginx-$pkgver.tar.gz
         git+https://github.com/stogh/ngx_http_auth_pam_module.git
         git+https://github.com/slact/nchan.git
         git+https://github.com/vozlt/nginx-module-vts.git
+        'git+https://github.com/openresty/lua-nginx-module.git#tag=v0.10.9rc7'
+        'git+https://github.com/simpl/ngx_devel_kit.git#tag=v0.3.0'
+        git+https://github.com/knyar/nginx-lua-prometheus.git
         )
-md5sums=('64cc970988356a5e0fc4fcd1ab84fe57'
+md5sums=('a2dd56ca33f4887f3cdaf232796de147'
          'ce9a06bcaf66ec4a3c4eb59b636e0dfd'
          '3441ce77cdd1aab6f0ab7e212698a8a7'
          '4d2e9c834fa2e60cd8b23185b93d2e2e'
+         'c5bf65bce7d949c798f817ed0d565a0f'
          'SKIP'
-         '809ca42d034b43a428e03794f7a6ce33'
-         'd7463449b6e1aea835a81c09fc67d521'
+         'SKIP'
+         'SKIP'
+         'SKIP'
          'SKIP'
          'SKIP'
          'SKIP'
@@ -55,7 +62,12 @@ md5sums=('64cc970988356a5e0fc4fcd1ab84fe57'
 
 build() {
   # https://www.nginx.com/resources/wiki/modules/
-  ln -sf "${srcdir}/psol" "${srcdir}/ngx_pagespeed-release-${_psver}-beta/psol"
+#  ln -sf "${srcdir}/psol" "${srcdir}/ngx_pagespeed-release-${_psver}-beta/psol"
+
+  cd mod_zip
+  patch -p 1 < ../mod_zip.patch
+  cd ..
+
   cd $provides-$pkgver
   ./configure \
     --prefix=/etc/nginx \
@@ -74,7 +86,6 @@ build() {
     --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
     --with-mail \
     --with-mail_ssl_module \
-    --with-ipv6 \
     --with-pcre-jit \
     --with-file-aio \
     --with-http_auth_request_module \
@@ -102,12 +113,14 @@ build() {
     --add-module=../ngx-fancyindex \
     --add-module=../headers-more-nginx-module \
     --add-module=../nginx-upload-progress-module \
-    --add-module=../mod_zip \
     --add-module=../nginx-unzip-module \
     --add-module=../ngx_http_auth_pam_module \
     --add-module=../nchan \
-    --add-module=../nginx-module-vts
-    #--add-module=../ngx_pagespeed-release-${_psver}-beta \
+    --add-module=../nginx-module-vts \
+    --add-module=../mod_zip
+#    --add-module=../ngx_devel_kit \
+#    --add-module=../lua-nginx-module
+#    --add-module=../ngx_pagespeed-release-${_psver}-beta \
   make
 }
 
@@ -139,6 +152,8 @@ package() {
   for i in ftdetect indent syntax; do
   install -Dm644 contrib/vim/${i}/nginx.vim "${pkgdir}/usr/share/vim/vimfiles/${i}/nginx.vim"
   done
+
+  install -Dm644 ../nginx-lua-prometheus/prometheus.lua "$pkgdir"/usr/share/nginx/lua/prometheus.lua
 
   rmdir "$pkgdir"/run
 }

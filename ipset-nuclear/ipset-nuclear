@@ -54,6 +54,11 @@ for list in ${BLUETACK[@]}; do
     i=$((i+1))
 done
 
+# remove private ranges (blocked by bogon list)
+ipset -! del blocks-tmp 10.0.0.0/8
+ipset -! del blocks-tmp 172.16.0.0/12
+ipset -! del blocks-tmp 192.168.0.0/16
+
 # apply
 ipset swap blocks blocks-tmp
 ipset destroy blocks-tmp

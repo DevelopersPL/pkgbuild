@@ -1,0 +1,66 @@
+diff --git a/ngx_http_zip_file.c b/ngx_http_zip_file.c
+index 23cca8e..8b6753f 100644
+--- a/ngx_http_zip_file.c
++++ b/ngx_http_zip_file.c
+@@ -15,6 +15,9 @@ static ngx_str_t ngx_http_zip_header_name_separator = ngx_string("upstream_http_
+ 
+ #define NGX_MAX_UINT16_VALUE 0xffff
+ 
++static ngx_int_t ngx_http_upstream_header_variable(ngx_http_request_t *r,
++        ngx_http_variable_value_t *v, uintptr_t data);
++
+ 
+ // Chunk templates for fast struct init:
+ 
+@@ -735,3 +738,18 @@ ngx_http_zip_write_central_directory_entry(u_char *p, ngx_http_zip_file_t *file,
+     }
+     return p;
+ }
++
++/* From http/ngx_http_variables.c */
++static ngx_int_t
++ngx_http_upstream_header_variable(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data)
++{
++    if (r->upstream == NULL) {
++        v->not_found = 1;
++        return NGX_OK;
++    }
++
++    return ngx_http_variable_unknown_header(v, (ngx_str_t *) data,
++                                         &r->upstream->headers_in.headers.part,
++                                         sizeof("upstream_http_") - 1);
++}
+diff --git a/ngx_http_zip_module.c b/ngx_http_zip_module.c
+index 7f142c0..be9cd16 100644
+--- a/ngx_http_zip_module.c
++++ b/ngx_http_zip_module.c
+@@ -11,6 +11,9 @@
+ #include "ngx_http_zip_file.h"
+ #include "ngx_http_zip_headers.h"
+ 
++static ngx_int_t ngx_http_upstream_header_variable(ngx_http_request_t *r,
++        ngx_http_variable_value_t *v, uintptr_t data);
++
+ static size_t ngx_chain_length(ngx_chain_t *chain_link);
+ static ngx_chain_t *ngx_chain_last_link(ngx_chain_t *chain_link);
+ static ngx_int_t ngx_http_zip_discard_chain(ngx_http_request_t *r,
+@@ -772,3 +775,18 @@ ngx_http_zip_init(ngx_conf_t *cf)
+ 
+     return NGX_OK;
+ }
++
++/* From http/ngx_http_variables.c */
++static ngx_int_t
++ngx_http_upstream_header_variable(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data)
++{
++    if (r->upstream == NULL) {
++        v->not_found = 1;
++        return NGX_OK;
++    }
++
++    return ngx_http_variable_unknown_header(v, (ngx_str_t *) data,
++                                         &r->upstream->headers_in.headers.part,
++                                         sizeof("upstream_http_") - 1);
++}

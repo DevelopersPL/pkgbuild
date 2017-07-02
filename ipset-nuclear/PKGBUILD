@@ -1,14 +1,14 @@
 # Maintainer: Daniel Speichert <daniel@speichert.pl>
 pkgname=ipset-nuclear
-pkgver=0.1
-pkgrel=8
+pkgver=0.2
+pkgrel=1
 pkgdesc='High-risk ipset blocking'
 arch=('any')
 license=('custom')
 depends=('iptables' 'ipset' 'wget')
 install='ipset-nuclear.install'
 source=('ipset-nuclear' 'ipset-nuclear.service' 'ipset-nuclear.timer')
-md5sums=('49d8fa448ce7588ec80a22c975ea6f38'
+md5sums=('584b5497e7f3034b86afe10bfc6dacae'
          'ac8ceffb1f848e0989065d7186ddfc8d'
          '12898fe1d8d66d4e0c0e734bc2f75922')
 

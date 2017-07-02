@@ -1,0 +1,12 @@
+post_install() {
+	usr/bin/systemctl daemon-reload
+}
+
+post_upgrade() {
+	post_install
+	usr/bin/systemctl try-restart nginx
+}
+
+pre_remove() {
+	usr/bin/systemctl stop nginx
+}
